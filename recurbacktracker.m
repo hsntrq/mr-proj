@@ -1,0 +1,55 @@
+% Define the dimensions of the maze
+maze_width = 20;
+maze_height = 20;
+
+% Create a matrix to represent the maze
+maze = ones(maze_height, maze_width);
+
+% Initialize the starting position of the maze
+current_row = 1;
+current_col = 1;
+
+% Initialize a stack to keep track of visited cells
+stack = [current_row, current_col];
+
+% Recursively explore the maze
+while ~(current_row == maze_height && current_col == maze_width)
+    % Check the current cell
+    maze(current_row, current_col) = 0;
+    
+    % Get the neighbors of the current cell
+    neighbors = [current_row-1, current_col; current_row+1, current_col; current_row, current_col-1; current_row, current_col+1];
+             
+    % Filter out the neighbors that are outside the maze boundaries
+    neighbors = neighbors(neighbors(:,1) > 0 & neighbors(:,1) <= maze_height & neighbors(:,2) > 0 & neighbors(:,2) <= maze_width, :);
+    
+    % Filter out the neighbors that have already been visited
+    neighbors = neighbors(maze(sub2ind(size(maze), neighbors(:,1), neighbors(:,2)))==1, :);
+    
+    % If there are no unvisited neighbors, backtrack
+    if isempty(neighbors)
+        % Pop the last cell from the stack
+        last_cell = stack(end,:);
+        stack(end,:) = [];
+        current_row = last_cell(1);
+        current_col = last_cell(2);
+    else
+        % Choose a random unvisited neighbor
+        neighbor_idx = randi(size(neighbors,1));
+        next_row = neighbors(neighbor_idx,1);
+        next_col = neighbors(neighbor_idx,2);
+        
+        % Push the current cell onto the stack
+        stack = [stack; current_row, current_col];
+        
+        % Move to the chosen neighbor
+        current_row = next_row;
+        current_col = next_col;
+    end
+end
+
+% Plot the maze
+figure;
+imagesc(maze);
+colormap([1 1 1; 0 0 0]);
+axis equal;

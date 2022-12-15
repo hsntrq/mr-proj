@@ -1,0 +1,52 @@
+function path = recursive_backtrack(map, start_pos, end_pos)
+    % Check if the start and end positions are valid
+    if start_pos < 1 || end_pos < 1 || start_pos > length(map) || end_pos > length(map)
+        error('Invalid start or end position');
+    end
+    
+    % Define the directions for the backtracking algorithm
+    directions = [1 0; -1 0; 0 1; 0 -1];
+    
+    % Define the path variable that will store the path
+    path = [];
+    
+    % Define the current position variable
+    current_pos = start_pos;
+    
+    % Keep track of visited cells to avoid getting stuck in a loop
+    visited = zeros(size(map));
+    
+    % Main loop that runs until the end position is reached
+    while current_pos ~= end_pos
+        % Check if the current position has been visited before
+        if visited(current_pos)
+            error('No path found');
+        end
+        
+        % Mark the current position as visited
+        visited(current_pos) = 1;
+        
+        % Append the current position to the path
+        path = [path current_pos];
+        
+        % Check the walls of the current cell
+        cell = map(current_pos);
+        walls = [bitget(cell, 1) bitget(cell, 2) bitget(cell, 3) bitget(cell, 4)];
+        
+        % Generate a list of valid moves (directions without walls)
+        valid_moves = directions(~walls, :);
+
+% Select a valid move at random
+num_moves = size(valid_moves, 1);
+if num_moves > 0
+    move_idx = randi(num_moves);
+    move = valid_moves(move_idx, :);
+
+    % Update the current position
+    current_pos = current_pos + move;
+else
+    % If there are no valid moves, backtrack to the previous position
+    path(end) = [];
+    current_pos = path(end);
+end
+    end

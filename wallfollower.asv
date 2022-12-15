@@ -1,0 +1,46 @@
+function path = wallfollower(map, start, finish)
+    % Check if start and finish are valid positions on the map
+    [m, n] = size(map);
+    if start(1) < 1 || start(1) > m || start(2) < 1 || start(2) > n
+        error('Invalid start position');
+    end
+    if finish(1) < 1 || finish(1) > m || finish(2) < 1 || finish(2) > n
+        error('Invalid finish position');
+    end
+
+    % Initialize path with start position
+    path = start;
+
+    % Initialize current position and direction
+    curr_pos = start;
+    direction = [0, 1]; % Initial direction is right
+
+    % Initialize visited positions
+    visited = zeros(m, n);
+
+    % Loop until we reach the finish position
+    while ~isequal(curr_pos, finish)
+        % Check if the next position in the current direction is a wall
+        next_pos = curr_pos + direction;
+        if next_pos(1) < 1 || next_pos(1) > m || next_pos(2) < 1 || next_pos(2) > n
+            % If the next position is outside the boundaries of the map, change direction
+            direction = [direction(2), -direction(1)]; % Rotate 90 degrees clockwise
+        elseif map(next_pos(1), next_pos(2)) == 1
+            % If the next position is a wall, change direction
+            direction = [direction(2), -direction(1)]; % Rotate 90 degrees clockwise
+        end
+
+        % Check if the algorithm is stuck in a loop
+        if visited(curr_pos(1), curr_pos(2)) == 1
+            % If the current position has been visited before, terminate the function
+            error('No path found');
+        end
+
+        % Mark the current position as visited
+        visited(curr_pos(1), curr_pos(2)) = 1;
+
+        % Move to the next position
+        curr_pos = curr_pos + direction;
+        path = [path; curr_pos]; % Add the new position to the path
+    end
+end
