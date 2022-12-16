@@ -5,6 +5,11 @@ function path = backtrack(map, start, finish)
 %   finish: Finishing coordinates [x, y]
 %   path: Array of coordinates [x1, y1; x2, y2; ...] representing the path from start to finish
 
+% Check input arguments
+if nargin < 3
+    error('Not enough input arguments')
+end
+
 % Initialize path
 path = [];
 
@@ -48,4 +53,3 @@ findPath(start);
 path = unique(path, 'rows', 'stable');
 
 end
-
