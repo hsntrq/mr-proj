@@ -68,7 +68,7 @@ end
 % [xc,yc,thetac] = GoXpositive(xc,yc,thetac,connection,parameters)
 % [xc,yc,thetac] = GoXpositive(xc,yc,thetac,connection,parameters)
 
-[map, path] = back_track(6,6, [1,6],[6,1], xc,yc,thetac,connection,parameters);
+[map, path] = random_mouse(6,6, [1,6],[6,1], xc,yc,thetac,connection,parameters);
 
 
 lProximity = LocalProximity(connection);

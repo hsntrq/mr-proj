@@ -1,4 +1,4 @@
-function path = random_mouse(map, start, finish)
+function [map, path] = random_mouse(m,n, start, finish, xc,yc,thetac,connection,parameters)
 %RANDOMMOUSE Finds a path from start to finish using the random mouse algorithm
 %   path = RANDOMMOUSE(map, start, finish) finds a path from the starting
 %   position (start) to the finishing position (finish) on the given map.
@@ -11,19 +11,21 @@ function path = random_mouse(map, start, finish)
 path = start;
 
 
-    [m, n] = size(map); % dimensions of the maze
+    map = zeros(m,n); % dimensions of the maze
 
-directions = [1, 0; -1, 0; 0, 1; 0, -1]; % [right, left, down, up]
+    directions = [ 0, -1; 0, 1; 1, 0; -1, 0]; % [right, left, down, up]
 
 % While the current position is not the finishing position
 while ~isequal(path(end,:), finish)
     % Find the valid moves from the current position (up, down, left, right)
         neighbors = path(end,:) + directions; % generate all possible neighbors
-        neighbors = unique(neighbors, 'rows'); % remove duplicates
+         % neighbors = unique(neighbors, 'rows'); % remove duplicates
+        proximity = GlobalProximity(connection, thetac);
+        map(path(end,:)) = bin2dec(num2str(proximity));
+        neighbors = neighbors(proximity == 0, :);
         neighbors = neighbors(all(neighbors > 0, 2) & ... % remove neighbors outside the maze
                             neighbors(:,1) <= m & ...
                             neighbors(:,2) <= n, :);
-        neighbors = neighbors(map(sub2ind([m, n], neighbors(:,1), neighbors(:,2))) == 0, :); % remove visited positions
     
     % If there are no valid moves, return an empty path (no solution)
     if isempty(neighbors)
@@ -36,5 +38,6 @@ while ~isequal(path(end,:), finish)
     
     % Add the move to the path
     path = [path; next];
+    [xc,yc,thetac] = moveDirection(path(end-1,:),path(end,:),xc,yc,thetac,connection,parameters);
 end
 end
