@@ -1,5 +1,5 @@
-function updatedProximity = GlobalProximity(proximity, thetac)
-    updatedProximity = proximity;
+function updatedProximity = GlobalProximity(connection, thetac)
+    proximity = LocalProximity(connection);
     if (3.141 < thetac && thetac < 3.142)
         updatedProximity = proximity;
     % Facing +ve Y-axis

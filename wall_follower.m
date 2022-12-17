@@ -1,40 +1,57 @@
-function path = wallfollower(map, start, finish)
-    % Check if start and finish are valid positions on the map
-    [m, n] = size(map);
+function path = wall_follower(map, start, finish)
+%WALL_FOLLOWER Finds a path from start to finish using the wall follower algorithm
+%   path = WALL_FOLLOWER(map, start, finish) finds a path from the starting
+%   position (start) to the finishing position (finish) on the given map.
+%   The map is a 2D matrix where 0 represents a free cell and 1 represents a
+%   wall. The start and finish positions are given as 1x2 arrays in the form
+%   [row, column]. The function returns the path as a 2D matrix, where each
+%   row represents a position on the map in the form [row, column].
 
-    % Initialize path with start position
-    path = start;
+% Initialize the path with the starting position
+path = start;
 
-    % Initialize current position and direction
-    curr_pos = start;
-    direction = [0, 1]; % Initial direction is right
+% Set the initial direction to face the finish position
+if start(1) < finish(1)
+    direction = [1, 0]; % facing down
+elseif start(1) > finish(1)
+    direction = [-1, 0]; % facing up
+elseif start(2) < finish(2)
+    direction = [0, 1]; % facing right
+elseif start(2) > finish(2)
+    direction = [0, -1]; % facing left
+end
 
-    % Initialize visited positions
-    visited = zeros(m, n);
+% Initialize the sum of turns made to 0
+turns_sum = 0;
 
-    % Loop until we reach the finish position
-    while ~isequal(curr_pos, finish)
-        % Check if the next position in the current direction is a wall
-        next_pos = curr_pos + direction;
-        if next_pos(1) < 1 || next_pos(1) > m || next_pos(2) < 1 || next_pos(2) > n
-            % If the next position is outside the boundaries of the map, change direction
-            direction = [direction(2), -direction(1)]; % Rotate 90 degrees clockwise
-        elseif map(next_pos(1), next_pos(2)) == 1
-            % If the next position is a wall, change direction
-            direction = [direction(2), -direction(1)]; % Rotate 90 degrees clockwise
+while ~isequal(path(end,:), finish)
+    % Move in the current direction
+    next = path(end,:) + direction;
+    
+    % If the next position is not a wall, add it to the path
+    if map(next(1), next(2)) == 0
+        path = [path; next];
+    else
+        % Turn clockwise and add the new direction to the path
+        direction = [direction(2), -direction(1)];
+        path = [path; path(end,:) + direction];
+        
+        % Update the sum of turns made
+        turns_sum = turns_sum + 1;
+        
+        % Keep following the wall until the sum of turns made is 0
+        while turns_sum ~= 0
+            % Turn clockwise and add the new direction to the path
+            direction = [direction(2), -direction(1)];
+            path = [path; path(end,:) + direction];
+            
+            % Update the sum of turns made
+            if map(path(end,1), path(end,2)) == 0
+                turns_sum = turns_sum + 1;
+            else
+                turns_sum = turns_sum - 1;
+            end
         end
-
-        % Check if the algorithm is stuck in a loop
-        if visited(curr_pos(1), curr_pos(2)) == 1
-            % If the current position has been visited before, terminate the function
-            error('No path found');
-        end
-
-        % Mark the current position as visited
-        visited(curr_pos(1), curr_pos(2)) = 1;
-
-        % Move to the next position
-        curr_pos = curr_pos + direction;
-        path = [path; curr_pos]; % Add the new position to the path
     end
+end
 end
