@@ -12,7 +12,7 @@ function [map, path] = back_track(m,n, start, finish, xc,yc,thetac,connection,pa
         neighbors = path(end,:) + directions; % generate all possible neighbors
         % neighbors = unique(neighbors, 'rows'); % remove duplicates
         proximity = GlobalProximity(connection, thetac);
-        map(path(end,:)) = bin2dec(num2str(proximity));
+        map(path(end,1), path(end,2)) = bin2dec(num2str(proximity));
         neighbors = neighbors(proximity == 0, :);
         neighbors = neighbors(all(neighbors > 0, 2) & ... % remove neighbors outside the maze
                             neighbors(:,1) <= m & ...
