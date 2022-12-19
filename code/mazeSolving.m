@@ -70,6 +70,7 @@ end
 
 [map, path] = back_track(6,6, [1,6],[6,1], xc,yc,thetac,connection,parameters);
 
+mazeplotter(map);
 
 lProximity = LocalProximity(connection);
 gProximity = GlobalProximity(connection, thetac);
